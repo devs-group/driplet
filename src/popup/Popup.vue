@@ -1,5 +1,6 @@
 <template>
   <main class="w-[300px] px-4 py-5">
+    <IntroSlider v-if="isFirstTimeUser" @finish="finishIntro" />
     <div class="flex flex-col items-center">
       <img src="/assets/icon.svg" class="w-16 h-16 mb-4" />
       <h1 class="text-xl font-bold mb-4">Dripplet</h1>
@@ -67,12 +68,16 @@ import {
   accessTokenStorage
 } from '~/logic/storage'
 import Login from '../components/Login.vue'
+import IntroSlider from '../components/IntroSlider.vue'
+import { firstTimeUserStorage } from '~/logic/storage'
 
 const trackBrowsing = ref(false)
 const trackInteractions = ref(false)
 const crawlWebsites = ref(false)
 
 const isAuthenticated = computed(() => !!accessTokenStorage.value)
+const isFirstTimeUser = computed(() => firstTimeUserStorage.value === 'true')
+
 console.log('isAuthenticated', isAuthenticated)
 onMounted(() => {
   trackBrowsing.value = trackBrowsingStorage.value
@@ -96,5 +101,9 @@ function updateTracking() {
     trackInteractions: trackInteractions.value,
     crawlWebsites: crawlWebsites.value
   })
+}
+
+function finishIntro() {
+  firstTimeUserStorage.value = 'false'
 }
 </script>
