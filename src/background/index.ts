@@ -1,4 +1,5 @@
 import { sendMessage, onMessage } from 'webext-bridge'
+import { apiService } from './services/api'
 
 chrome.runtime.onInstalled.addListener((): void => {
   // eslint-disable-next-line no-console
@@ -7,53 +8,53 @@ chrome.runtime.onInstalled.addListener((): void => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'login') {
-    
-    const clientId = chrome.runtime.getManifest().oauth2?.client_id;
-    const redirectUri = chrome.identity.getRedirectURL();
-    const scopes = [
-      'openid',
-      'email',
-      'profile',
-    ].join(' ');
+    const clientId = chrome.runtime.getManifest().oauth2?.client_id
+    const redirectUri = chrome.identity.getRedirectURL()
+    const scopes = ['openid', 'email', 'profile'].join(' ')
 
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+    const authUrl =
+      `https://accounts.google.com/o/oauth2/v2/auth?` +
       `client_id=${clientId}&` +
       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
       `response_type=token&` +
-      `scope=${encodeURIComponent(scopes)}`;
+      `scope=${encodeURIComponent(scopes)}`
 
     chrome.identity.launchWebAuthFlow(
       {
         url: authUrl,
-        interactive: true,
+        interactive: true
       },
       (redirectUrl) => {
         if (chrome.runtime.lastError || !redirectUrl) {
-          sendResponse({ success: false, error: chrome.runtime.lastError?.message || 'Authentication failed' });
-          return;
+          sendResponse({
+            success: false,
+            error: chrome.runtime.lastError?.message || 'Authentication failed'
+          })
+          return
         }
 
         // Extract the access token from the redirect URL
-        const params = new URLSearchParams(new URL(redirectUrl).hash.substring(1));
-        const accessToken = params.get('access_token');
+        const params = new URLSearchParams(
+          new URL(redirectUrl).hash.substring(1)
+        )
+        const accessToken = params.get('access_token')
 
         if (!accessToken) {
-          sendResponse({ success: false, error: 'No access token received' });
-          return;
+          sendResponse({ success: false, error: 'No access token received' })
+          return
         }
 
         // Store the access token securely
         chrome.storage.local.set({ accessToken }, () => {
-          sendResponse({ success: true, accessToken });
-        });
+          sendResponse({ success: true, accessToken })
+        })
       }
-    );
+    )
 
     // Keep the message channel open for sendResponse
-    return true;
+    return true
   }
-});
-
+})
 
 let previousTabId = 0
 
@@ -88,4 +89,39 @@ onMessage('get-current-tab', async () => {
       title: undefined
     }
   }
+})
+
+onMessage('page-info', async ({ data }) => {
+  console.log('page-info', data)
+  await apiService.makeRequest(data)
+})
+
+onMessage('performance-metrics', async ({ data }) => {
+  console.log('performance-metrics', data)
+  await apiService.makeRequest(data)
+})
+
+onMessage('browsing-behaviour', async ({ data }) => {
+  console.log('browsing-behaviour', data)
+  await apiService.makeRequest(data)
+})
+
+onMessage('loaded-scripts', async ({ data }) => {
+  console.log('loaded-scripts', data)
+  await apiService.makeRequest(data)
+})
+
+onMessage('user-clicks', async ({ data }) => {
+  console.log('user-clicks', data)
+  await apiService.makeRequest(data)
+})
+
+onMessage('user-interaction', async ({ data }) => {
+  console.log('user-interaction', data)
+  await apiService.makeRequest(data)
+})
+
+onMessage('user-data', async ({ data }) => {
+  console.log('user-data', data)
+  await apiService.makeRequest(data)
 })

@@ -31,7 +31,7 @@ export async function getManifest(): Promise<ExtendedWebExtensionManifest> {
     },
     content_scripts: [
       {
-        matches: ['http://*/*', 'https://*/*'],
+        matches: ['<all_urls>'],
         js: ['./content/index.global.js']
       }
     ],

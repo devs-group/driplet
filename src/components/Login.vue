@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { accessTokenStorage } from '~/logic/storage'
+import { accessTokenStorage, clearAllStorage } from '~/logic/storage'
 
 interface UserProfile {
   name: string
@@ -66,10 +66,9 @@ const handleLogin = async () => {
 }
 
 const handleLogout = async () => {
-  chrome.storage.local.remove(['accessToken', 'userProfile'], () => {
-    accessTokenStorage.value = null
-    userProfile.value = null
-  })
+  clearAllStorage()
+  accessTokenStorage.value = null
+  userProfile.value = null
 }
 
 const fetchUserProfile = async (accessToken: string) => {
