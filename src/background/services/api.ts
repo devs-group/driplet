@@ -1,4 +1,3 @@
-
 interface ApiResponse {
   success: boolean
   error?: string
@@ -11,15 +10,12 @@ class ApiService {
     this.baseUrl = 'http://localhost:1991' // replace this later
   }
 
-
-
   public async makeRequest(data: any): Promise<ApiResponse> {
-
     const token = await new Promise<string | null>((resolve) => {
       chrome.storage.local.get(['accessToken'], (result) => {
-        resolve(result.accessToken || null);
-      });
-    });
+        resolve(result.accessToken || null)
+      })
+    })
 
     if (!token) {
       console.error('No authentication token found')
@@ -31,9 +27,9 @@ class ApiService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
-       body: JSON.stringify({event: data})
+        body: JSON.stringify({ event: data })
       })
       console.log('response', response)
       if (!response.ok) {
@@ -43,11 +39,9 @@ class ApiService {
       return { success: true }
     } catch (error) {
       console.error('API request failed:', error)
-      return { success: false, error: error.message }
+      return { success: false, error: error as string }
     }
   }
-
-  
 }
 
 export const apiService = new ApiService()

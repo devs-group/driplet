@@ -19,10 +19,15 @@
     "p:up": "pnpm up"
   },
   "dependencies": {
+    "@fontsource/fira-code": "^5.1.0",
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/roboto": "^5.1.0",
     "@solana/web3.js": "^1.95.3",
+    "@unovis/vue": "^1.4.5",
     "bip39": "^3.1.0",
     "buffer": "^6.0.3",
-    "vue-i18n": "^9.2.2"
+    "vue-i18n": "^9.2.2",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.7.0",

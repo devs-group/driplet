@@ -5,8 +5,14 @@ export default defineConfig({
   // https://windicss.org/posts/v30.html#attributify-mode
   attributify: true,
   extract: {
-    include: [
-      '**/*.{vue,html}',
-    ],
+    include: ['**/*.{vue,html}']
   },
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'], // Default text font
+        mono: ['Fira Code', 'monospace'] // Code font
+      }
+    }
+  }
 })

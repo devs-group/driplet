@@ -1,67 +1,56 @@
 import { useLocalStorage } from '@vueuse/core'
 
-export const solanaPublicKeyStorage = useLocalStorage(
-  'soalan-public-key',
-  '',
-  {
-    listenToStorageChanges: true
-  }
-)
-
-export const trackBrowsingStorage = useLocalStorage('track-browsing', 'true', {
+const solanaPublicKey = useLocalStorage('soalan-public-key', '', {
   listenToStorageChanges: true
 })
 
-export const trackInteractionsStorage = useLocalStorage(
-  'track-interaction',
-  'true',
-  {
-    listenToStorageChanges: true
-  }
-)
-
-export const crawlWebsitesStorage = useLocalStorage(
-  'crawl-websites',
-  'true',
-  {
-    listenToStorageChanges: true
-  }
-)
-
-export const emailNotificationsStorage = useLocalStorage(
-  'email-notifications',
-  'true',
-  {
-    listenToStorageChanges: true
-  }
-)
-
-export const browserNotificationsStorage = useLocalStorage(
-  'browser-notifications',
-  'true',
-  {
-    listenToStorageChanges: true
-  }
-)
-
-export const accessTokenStorage = useLocalStorage<string | null>('access-token', null, {
+const trackBrowsing = useLocalStorage('track-browsing', true, {
   listenToStorageChanges: true
 })
 
-export const firstTimeUserStorage = useLocalStorage('first-time-user', 'true', {
+const trackInteractions = useLocalStorage('track-interaction', true, {
   listenToStorageChanges: true
 })
 
+const crawlWebsites = useLocalStorage('crawl-websites', true, {
+  listenToStorageChanges: true
+})
 
-// Function to clear all storage
+const emailNotifications = useLocalStorage('email-notifications', true, {
+  listenToStorageChanges: true
+})
+
+const browserNotifications = useLocalStorage('browser-notifications', true, {
+  listenToStorageChanges: true
+})
+
+const accessToken = useLocalStorage<string | null>('access-token', null, {
+  listenToStorageChanges: true
+})
+
+const isFirstTimeUser = useLocalStorage('first-time-user', true, {
+  listenToStorageChanges: true
+})
+
+export const storage = {
+  isFirstTimeUser,
+  accessToken,
+  browserNotifications,
+  emailNotifications,
+  crawlWebsites,
+  trackBrowsing,
+  trackInteractions,
+  solanaPublicKey
+}
+
 export const clearAllStorage = () => {
-  solanaPublicKeyStorage.value = ''
-  trackBrowsingStorage.value = 'true'
-  trackInteractionsStorage.value = 'true'
-  crawlWebsitesStorage.value = 'true'
-  accessTokenStorage.value = null
-  firstTimeUserStorage.value = 'true'
-  emailNotificationsStorage.value = 'true'
-  browserNotificationsStorage.value = 'true'
-  accessTokenStorage.value = null
+  solanaPublicKey.value = ''
+  trackBrowsing.value = true
+  trackInteractions.value = true
+  crawlWebsites.value = true
+  accessToken.value = null
+  isFirstTimeUser.value = true
+  emailNotifications.value = true
+  browserNotifications.value = true
+  accessToken.value = null
 }
