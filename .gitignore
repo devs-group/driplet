@@ -3,5 +3,7 @@ backend/credentials/*
 node_modules
 launch.json
 
+tmp
+
 # Env files
 .env
