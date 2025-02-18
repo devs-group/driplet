@@ -7,8 +7,8 @@ export class EventApiService extends ApiService {
 
   public async sendEvent(data: any): Promise<Response> {
     return this.post({
-      endpoint: '/collect/client-event',
-      body: { event: data }
+      endpoint: '/api/v1/event',
+      body: { data }
     })
   }
 }

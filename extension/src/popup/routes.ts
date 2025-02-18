@@ -11,6 +11,7 @@ const checkAuth = async () => {
   const result = await chrome.storage.local.get(key)
   isAuthenticated.value = !!result[key]
 }
+
 checkAuth()
 
 const routes = [

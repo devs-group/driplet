@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"sync"
 
@@ -33,7 +34,7 @@ type SubscriberConfig struct {
 func DefaultConfig() Config {
 	return Config{
 		ProjectID:        getEnvOrDefault("PUBSUB_PROJECT_ID", "local-project"),
-		CredentialsFile:  getEnvOrDefault("GOOGLE_APPLICATION_CREDENTIALS", ""),
+		CredentialsFile:  getEnvOrDefault("PUBSUB_APPLICATION_CREDENTIALS", ""),
 		EmulatorHost:     os.Getenv("PUBSUB_EMULATOR_HOST"),
 		AutoCreateTopics: true,
 		DefaultSubscriberConfig: SubscriberConfig{
@@ -47,12 +48,15 @@ func DefaultConfig() Config {
 func Connect(ctx context.Context, cfg Config) (*Client, error) {
 	var opts []option.ClientOption
 
+	slog.Info("connecting to pubsub", "projectID", cfg.ProjectID)
 	if cfg.EmulatorHost != "" {
+		slog.Info("using pubsub emulator", "host", cfg.EmulatorHost)
 		// Using emulator
 		if err := os.Setenv("PUBSUB_EMULATOR_HOST", cfg.EmulatorHost); err != nil {
 			return nil, fmt.Errorf("failed to set emulator host: %w", err)
 		}
 	} else if cfg.CredentialsFile != "" {
+		slog.Info("using credentials file for pubsub", "path", cfg.CredentialsFile)
 		// Using credentials file
 		opts = append(opts, option.WithCredentialsFile(cfg.CredentialsFile))
 	}
@@ -62,6 +66,7 @@ func Connect(ctx context.Context, cfg Config) (*Client, error) {
 		return nil, fmt.Errorf("failed to create pubsub client: %w", err)
 	}
 
+	slog.Info("pubsub connection has been established!")
 	return &Client{
 		Client:    client,
 		projectID: cfg.ProjectID,

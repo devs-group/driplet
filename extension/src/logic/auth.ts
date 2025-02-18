@@ -108,7 +108,7 @@ export async function handleLogin() {
             await chrome.storage.local.set({ accessToken })
             const profile = await fetchGoogleUserProfile(accessToken)
             await chrome.storage.local.set({ userProfile: profile })
-            await saveUser()
+            await signUpUser()
             resolve(accessToken)
           } else {
             reject('Login failed. No access token returned.')
@@ -143,9 +143,9 @@ export async function handleLogout(): Promise<void> {
  * saves the current user on the backend
  * @returns The response
  */
-export async function saveUser() {
+export async function signUpUser() {
   const userApiService = new UserApiService()
-  return userApiService.saveUser()
+  return userApiService.GET_User()
 }
 
 /**

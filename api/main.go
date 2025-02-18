@@ -24,7 +24,24 @@ func main() {
 				Name:  "run",
 				Usage: "executes the api",
 				Action: func(c *cli.Context) error {
-					app := fiber.New()
+					app := fiber.New(fiber.Config{
+						ReadBufferSize:  8192,
+						WriteBufferSize: 8192,
+						BodyLimit:       10 * 1024 * 1024, // 10MB
+						ServerHeader:    "driplet-api",
+						StrictRouting:   false,
+						CaseSensitive:   false,
+						RequestMethods: []string{
+							fiber.MethodGet,
+							fiber.MethodPost,
+							fiber.MethodHead,
+							fiber.MethodPut,
+							fiber.MethodDelete,
+							fiber.MethodPatch,
+							fiber.MethodOptions,
+						},
+						DisableKeepalive: false,
+					})
 					di.Init()       // initializing dependency injection container
 					InitRoutes(app) // initializing http routes
 					return app.Listen(getPort())
@@ -58,7 +75,7 @@ func main() {
 								return fmt.Errorf("failed to connect to database: %w", err)
 							}
 							defer database.Close()
-							return migrations.RunMigrations(database.DB, "up")
+							return migrations.RunMigrations(database.SQL, "up")
 						},
 					},
 					{
@@ -70,7 +87,7 @@ func main() {
 								return fmt.Errorf("failed to connect to database: %w", err)
 							}
 							defer database.Close()
-							return migrations.RunMigrations(database.DB, "down")
+							return migrations.RunMigrations(database.SQL, "down")
 						},
 					},
 					{
@@ -82,7 +99,7 @@ func main() {
 								return fmt.Errorf("failed to connect to database: %w", err)
 							}
 							defer database.Close()
-							return migrations.RunMigrations(database.DB, "reset")
+							return migrations.RunMigrations(database.SQL, "reset")
 						},
 					},
 					{
@@ -94,7 +111,7 @@ func main() {
 								return fmt.Errorf("failed to connect to database: %w", err)
 							}
 							defer database.Close()
-							return migrations.RunMigrations(database.DB, "status")
+							return migrations.RunMigrations(database.SQL, "status")
 						},
 					},
 				},

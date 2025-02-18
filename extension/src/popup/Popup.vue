@@ -34,7 +34,9 @@
               v-model="publicKey"
               class="text-black text-lg focus:outline-none rounded-md px-2 h-11"
             />
-            <Button>Save</Button>
+            <Button @click="savePublicKey" :isLoading="isLoading.savePublicKey">
+              Save
+            </Button>
           </div>
         </div>
       </div>
@@ -71,20 +73,30 @@
         </div>
       </div>
     </div>
+
+    <!-- Toast Container -->
+    <ToastContainer position="bottom-center" :maxToasts="3" ref="toastRef" />
   </main>
 </template>
+
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import { handleLogout, getUserProfile, UserProfile } from '../logic'
 import { UserApiService } from '~/background/services/user'
 import { useRouter } from 'vue-router'
 import LineChart from '../components/charts/LineChart.vue'
 import Button from '../components/buttons/Button.vue'
+import ToastContainer from '../components/toaster/ToasterContainer.vue'
 
 const router = useRouter()
+const toastRef = ref<any>(null)
 
 const userProfile = ref<UserProfile>()
 const credits = ref(0)
 const publicKey = ref('')
+const isLoading = ref({
+  savePublicKey: false
+})
 
 const formattedCredits = computed(() => formatCreditsNumber(credits.value))
 
@@ -99,8 +111,14 @@ async function setCurrentUserProfile() {
 
 async function setCurrentUserCredits() {
   const userApiService = new UserApiService()
-  const response = await userApiService.getUserCredits()
-  credits.value = response?.credits || 0
+  try {
+    const response = await userApiService.GET_User()
+    credits.value = response?.credits || 0
+    publicKey.value = response?.public_key || ''
+  } catch (err) {
+    router.push('/auth')
+    console.error(err)
+  }
 }
 
 function openSettings() {
@@ -112,7 +130,8 @@ async function onClickLogout() {
     await handleLogout()
     router.push('/auth')
   } catch (err) {
-    // TODO: show error notification here.
+    console.error(err)
+    router.push('/auth')
   }
 }
 
@@ -122,5 +141,27 @@ function formatCreditsNumber(credits: number) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(credits)
+}
+
+async function savePublicKey() {
+  isLoading.value.savePublicKey = true
+  const userApiService = new UserApiService()
+  try {
+    await userApiService.PUT_UpdateUsersPublicKey(publicKey.value)
+    toastRef.value?.toast.success(
+      'Your public key has been saved successfully',
+      {
+        duration: 4000
+      }
+    )
+  } catch (err) {
+    console.error(err)
+    toastRef.value?.toast.error('Failed to save public key', {
+      title: 'Error',
+      duration: 4000
+    })
+  } finally {
+    isLoading.value.savePublicKey = false
+  }
 }
 </script>

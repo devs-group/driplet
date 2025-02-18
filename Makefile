@@ -1,14 +1,6 @@
 migrate:
-	docker compose exec backend deno run -A npm:node-pg-migrate up -j sql
+	docker compose run --rm api go run . migrate up
 
+# make migration name=<some new migration name>;
 migration:
-	docker compose exec backend deno run -A npm:node-pg-migrate create $(name) -j sql
-
-logs:
-	docker compose logs -f backend
-
-start:
-	docker compose up -d
-
-stop:
-	docker compose down
+	docker compose run --rm api go run . migrate create -n $(name)

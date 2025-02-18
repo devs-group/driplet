@@ -1,7 +1,9 @@
 import { ApiService } from './api'
 
-export interface GetUserCreditsResponse {
+export interface GetUserResponse {
   credits: number
+  email: string
+  public_key: string
 }
 
 export class UserApiService extends ApiService {
@@ -9,24 +11,18 @@ export class UserApiService extends ApiService {
     super()
   }
 
-  public async saveUser(): Promise<Response> {
-    return this.post({
-      endpoint: '/auth/user'
-    })
-  }
-
-  public async savePublicKey(publicKey: string): Promise<Response> {
-    return this.post({
-      endpoint: '/auth/user',
+  public async PUT_UpdateUsersPublicKey(publicKey: string): Promise<Response> {
+    return this.put({
+      endpoint: '/api/v1/user/public-key',
       body: {
-        publicKey
+        public_key: publicKey
       }
     })
   }
 
-  public async getUserCredits(): Promise<GetUserCreditsResponse> {
-    return await this.get<GetUserCreditsResponse>({
-      endpoint: '/auth/user/credits'
+  public async GET_User(): Promise<GetUserResponse> {
+    return await this.get<GetUserResponse>({
+      endpoint: '/api/v1/user'
     })
   }
 }

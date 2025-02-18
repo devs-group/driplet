@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"log/slog"
 	"strings"
 
 	"github.com/devs-group/driplet/api/auth"
@@ -42,11 +43,14 @@ func RequireAuth(config AuthConfig) fiber.Handler {
 		// Get or create user
 		user, err := config.UsersRepository.FindByEmail(claims.Email)
 		if err != nil {
+			slog.Error("unable to find user by email", "email", claims.Email, "err", err)
 			// If user doesn't exist, create them
 			user = &repositories.User{
-				Email: claims.Email,
+				Email:   claims.Email,
+				OAuthID: claims.GoogleID,
 			}
 			if err := config.UsersRepository.Create(user); err != nil {
+				slog.Error("unable to create user while auth", "err", err)
 				return c.Status(500).JSON(fiber.Map{
 					"error": "Failed to create user",
 				})

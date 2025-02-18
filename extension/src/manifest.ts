@@ -51,7 +51,7 @@ export async function getManifest(): Promise<ExtendedWebExtensionManifest> {
       'storage',
       'activeTab'
     ],
-    host_permissions: ['http://*/*', 'https://*/*', 'http://localhost:1991/*'],
+    host_permissions: ['http://*/*', 'https://*/*', 'http://localhost:9000/*'],
     oauth2: {
       client_id:
         '34932676923-luth1cmkkhoqhq3kaoealqj2poosaln4.apps.googleusercontent.com',

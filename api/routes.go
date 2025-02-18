@@ -29,6 +29,10 @@ func InitRoutes(app *fiber.App) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to create new health handler")
 	}
+	eventsHandler, err := handlers.NewEventsHandler()
+	if err != nil {
+		return errors.Wrap(err, "unable to create new events handler")
+	}
 
 	v1 := app.Group(
 		"/api/v1",
@@ -38,7 +42,12 @@ func InitRoutes(app *fiber.App) error {
 		}),
 	)
 	app.Get("/health", healthHandler.GET_health)
+	v1.Options("*", func(c *fiber.Ctx) error {
+		return c.SendStatus(fiber.StatusOK)
+	})
 	v1.Get("/user", usersHandler.GET_User)
+	v1.Put("/user/public-key", usersHandler.PUT_UpdateUsersPublicKey)
+	v1.Post("/event", eventsHandler.POST_CreateEvent)
 
 	return nil
 }

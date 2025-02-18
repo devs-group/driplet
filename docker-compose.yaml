@@ -1,37 +1,4 @@
 services:
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "1991:1991"
-  #   volumes:
-  #     - ./backend:/app
-  #     - $HOME/.deno:/deno-dir
-  #   environment:
-  #     - ENV=development
-  #     - DATABASE_URL=postgres://postgres:postgres@database:5432/postgres
-  #     - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/service-account-key.json
-  #     - PUBSUB_EMULATOR_HOST=pubsub:8085
-  #   env_file:
-  #     - .env
-  #   restart: unless-stopped
-  #   command:
-  #     [
-  #       "run",
-  #       "--watch",
-  #       "--allow-net",
-  #       "--allow-read",
-  #       "--allow-env",
-  #       "--allow-sys",
-  #       "main.ts",
-  #     ]
-  #   depends_on:
-  #     database:
-  #       condition: service_healthy
-  #     pubsub:
-  #       condition: service_started
-
   api:
     build:
       context: .
@@ -40,18 +7,6 @@ services:
     working_dir: /app/api
     ports:
       - "9000:9000"
-    environment:
-      - ENV=development
-      - PORT=9000
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=postgres
-      - DB_SSLMODE=disable
-      - PUBSUB_PROJECT_ID=local-project
-      - PUBSUB_EMULATOR_HOST=pubsub:8085
-      - GOOGLE_CLIENT_ID=34932676923-luth1cmkkhoqhq3kaoealqj2poosaln4.apps.googleusercontent.com
     env_file:
       - .env
     volumes:
@@ -70,16 +25,6 @@ services:
       dockerfile: scheduler/Dockerfile
       target: development
     working_dir: /app/scheduler
-    environment:
-      - ENV=development
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=postgres
-      - DB_SSLMODE=disable
-      - PUBSUB_PROJECT_ID=local-project
-      - PUBSUB_EMULATOR_HOST=pubsub:8085
     env_file:
       - .env
     volumes:

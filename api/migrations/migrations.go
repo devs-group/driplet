@@ -56,7 +56,7 @@ func CreateMigrationFile(name string) error {
 		return fmt.Errorf("failed to get current directory: %w", err)
 	}
 
-	migrationsDir := filepath.Join(dir, "api", "migrations")
+	migrationsDir := filepath.Join(dir, "migrations")
 	if err := os.MkdirAll(migrationsDir, 0755); err != nil {
 		return fmt.Errorf("failed to create migrations directory: %w", err)
 	}

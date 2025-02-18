@@ -1,82 +1,187 @@
-# 🌊 Driplet Core
+# 🌊 Driplet
 
-A lightweight backend service for authentication and data streaming management
-built with DENO 🦕.
+A comprehensive monorepo containing all Driplet services and components.
 
 ## 🌟 Overview
 
-Driplet Core serves as the authentication backbone and data ingestion service
-for the Driplet ecosystem. The service currently handles:
+Driplet is a complete ecosystem for data capture and processing with these key components:
 
-- User authentication and authorization
-- Data insertion into PubSub topic
+- **API Service**: Authentication backbone and data ingestion service
+- **Scheduler**: Cloud Run-based recurring job processor
+- **Chrome Extension**: User-facing browser extension
+- **Landing Page**: Public-facing website built with Next.js
+
+## 🏗️ Project Structure
+
+```
+driplet/
+├── api/                # Go-based REST API service
+├── scheduler/          # Go-based Cloud Run scheduler service
+├── extension/          # Chrome extension (TypeScript/Vue)
+├── landing/            # Next.js website
+└── pkg/                # Shared Go packages
+```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Docker and Docker Compose installed on your system
-- Make (optional, but recommended for easier command execution)
+- Docker and Docker Compose
+- Make (optional, but recommended)
+- Node.js and pnpm (for extension and landing page development)
+- Go (for direct API/scheduler development)
 
-### Running the Service
+### Environment Setup
 
-You can start the service using either Docker Compose directly or the prepared
-Makefile commands.
+1. Clone the repository
+   ```bash
+   git clone https://github.com/devs-group/driplet.git
+   cd driplet
+   ```
 
-#### Using Makefile
+2. Copy a `.env.example` file in the root directory and replace required variables
 
-Start the service:
+## 🛠️ Development
 
-```bash
-make start
-```
+### Running the Backend Services
 
-Stop the service:
-
-```bash
-make stop
-```
-
-Run database migrations:
-
-```bash
-make migrate
-```
-
-Create a new database migration file
-
-```bash
-make migration name=<migration_name>
-```
-
-View backend logs:
-
-```bash
-make logs
-```
-
-#### Using Docker Compose Directly
-
-Start the service:
+Start all services using Docker Compose:
 
 ```bash
 docker compose up -d
 ```
 
-Stop the service:
+Stop all services:
 
 ```bash
 docker compose down
 ```
 
-Run migrations:
+### Database Management
+
+Run migrations to set up the database schema:
 
 ```bash
-docker compose exec backend deno run -A npm:node-pg-migrate up -j sql
+make migrate
 ```
 
-View logs:
+Create a new migration:
 
 ```bash
-docker compose logs -f backend
+make migration name=add_new_table
 ```
+
+### Extension Development
+
+Navigate to the extension directory:
+
+```bash
+cd extension
+```
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Start development server:
+
+```bash
+pnpm dev
+```
+
+Load the extension in Chrome:
+1. Open Chrome and navigate to `chrome://extensions`
+2. Enable "Developer mode"
+3. Click "Load unpacked" and select the `extension/` folder
+
+Build the extension for production:
+
+```bash
+pnpm build
+```
+
+### Landing Page Development
+
+Navigate to the landing page directory:
+
+```bash
+cd landing
+```
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Start development server:
+
+```bash
+pnpm dev
+```
+
+Build for production:
+
+```bash
+pnpm build
+```
+
+## 🧩 Architecture
+
+### API Service
+
+The API service handles:
+- User authentication (Google OAuth)
+- Authorization
+- Data ingestion into PubSub topics
+- Database access and management
+
+### Scheduler
+
+The scheduler service:
+- Runs in Cloud Run environment
+- Executes recurring cron jobs
+- Processes scheduled tasks
+
+### Chrome Extension
+
+The extension includes:
+- Background scripts
+- Content scripts
+- Popup UI
+- Options page
+
+### Data Flow
+
+1. User interactions captured by the Chrome extension
+2. Data sent to API service
+3. API publishes events to PubSub
+4. Scheduler processes events according to defined schedules
+
+## 🧪 Testing
+
+Run backend tests:
+
+```bash
+docker compose run --rm api go test ./...
+docker compose run --rm scheduler go test ./...
+```
+
+## 📦 Deployment
+
+### API and Scheduler
+
+The services are containerized and can be deployed to any container orchestration platform:
+- Google Cloud Run
+
+### Extension
+
+1. Build the extension:
+   ```bash
+   cd extension
+   pnpm build
+   ```
+2. Package files under `extension/`
+3. Publish to Chrome Web Store

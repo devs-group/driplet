@@ -1,11 +1,9 @@
 package auth
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
-
-	"github.com/go-faster/errors"
-	"google.golang.org/api/idtoken"
+	"net/http"
 )
 
 type GoogleClaims struct {
@@ -14,6 +12,14 @@ type GoogleClaims struct {
 	Name          string `json:"name"`
 	Picture       string `json:"picture"`
 	GoogleID      string `json:"sub"`
+}
+
+type GoogleUserInfo struct {
+	ID            string `json:"id"`
+	Email         string `json:"email"`
+	VerifiedEmail bool   `json:"verified_email"`
+	Name          string `json:"name"`
+	Picture       string `json:"picture"`
 }
 
 type TokenValidator struct {
@@ -29,33 +35,28 @@ func NewTokenValidator(clientID string, allowedExtensionIDs []string) *TokenVali
 }
 
 func (v *TokenValidator) ValidateGoogleToken(token string) (*GoogleClaims, error) {
-	payload, err := idtoken.Validate(context.Background(), token, v.clientID)
+	// Call the same endpoint as the frontend
+	resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to validate token")
+		return nil, fmt.Errorf("failed to validate token: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("invalid token: status %d", resp.StatusCode)
 	}
 
-	// Verify the audience is allowed
-	audience := payload.Claims["aud"].(string)
-	isAllowed := false
-	for _, id := range v.allowedExtensionIDs {
-		if audience == id {
-			isAllowed = true
-			break
-		} else {
-			return nil, fmt.Errorf("not allowed audience with id: %s tried to get access to the api", id)
-		}
-	}
-
-	if !isAllowed {
-		return nil, fmt.Errorf("token audience %s is not allowed", audience)
+	var userInfo GoogleUserInfo
+	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
+		return nil, fmt.Errorf("failed to decode user info: %w", err)
 	}
 
 	claims := &GoogleClaims{
-		Email:         payload.Claims["email"].(string),
-		EmailVerified: payload.Claims["email_verified"].(bool),
-		Name:          payload.Claims["name"].(string),
-		Picture:       payload.Claims["picture"].(string),
-		GoogleID:      payload.Claims["sub"].(string),
+		Email:         userInfo.Email,
+		EmailVerified: userInfo.VerifiedEmail,
+		Name:          userInfo.Name,
+		Picture:       userInfo.Picture,
+		GoogleID:      userInfo.ID,
 	}
 
 	return claims, nil

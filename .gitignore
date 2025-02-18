@@ -5,5 +5,7 @@ launch.json
 
 tmp
 
+.DS_Store
+
 # Env files
 .env
