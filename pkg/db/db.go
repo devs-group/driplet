@@ -27,19 +27,7 @@ type Config struct {
 
 // DefaultConfig returns a default database configuration based on environment variables
 func DefaultConfig() Config {
-	// Get connection parameters from environment variables with defaults
-	user := getEnv("POSTGRES_USER", "postgres")
-	password := getEnv("POSTGRES_PASSWORD", "postgres")
-	dbName := getEnv("POSTGRES_DB", "postgres")
-	host := getEnv("POSTGRES_HOST", "database")
-	port := getEnv("POSTGRES_PORT", "5432")
-	sslMode := getEnv("POSTGRES_SSLMODE", "disable")
-
-	// Build connection string
-	connString := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		host, port, user, password, dbName, sslMode,
-	)
+	connString := getEnv("DATABASE_URL", "")
 
 	// Parse connection settings
 	maxOpenConns := getIntEnv("DB_MAX_OPEN_CONNS", 10)

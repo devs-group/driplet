@@ -4,7 +4,7 @@ export class ApiService {
   public static readonly STATUS_UNAUTHORIZED = 'STATUS_UNAUTHORIZED'
 
   constructor() {
-    this.baseUrl = 'http://localhost:9000' // TODO: replace with variable
+    this.baseUrl = 'https://sandbox.driplet.codify.ch/' // TODO: replace with variable
   }
 
   private async getAccessToken(): Promise<string | null> {

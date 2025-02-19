@@ -54,7 +54,7 @@ export async function getManifest(): Promise<ExtendedWebExtensionManifest> {
     host_permissions: ['http://*/*', 'https://*/*', 'http://localhost:9000/*'],
     oauth2: {
       client_id:
-        '34932676923-luth1cmkkhoqhq3kaoealqj2poosaln4.apps.googleusercontent.com',
+        '556560630995-bfnutpu77dmmic65k4cet5r0b7p8oa2o.apps.googleusercontent.com',
       scopes: [
         'openid',
         'email',
