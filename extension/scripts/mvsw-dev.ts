@@ -3,10 +3,12 @@ import fs from 'fs-extra'
 import { logger } from './utils'
 ;(async () => {
   try {
-    // copy icon files
+    // move icon files
     await fs.copy(resolve('public'), resolve('extension/dev/assets'), {
       overwrite: true
     })
+    
+    // move service worker
     await fs.move(
       resolve('extension/dev/dist/background/index.global.js'),
       resolve('extension/dev/background.js'),
