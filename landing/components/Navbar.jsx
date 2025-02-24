@@ -41,7 +41,13 @@ const Navbar = () => {
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              {/* TODO: Add a logo */}
+              <Image
+                src="/driplet-logo.png"
+                alt="Driplet Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
             </Link>
           </div>
 
